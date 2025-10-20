@@ -95,9 +95,9 @@ def process_new_candle(new_candle):
                           account_equity=100000, 
                           risk_per_trade=0.02,
                           atr_multiplier=3.5,
-                          adx_threshold=25,
-                          ema_fast=21,
-                          ema_slow=55,
+                          adx_threshold=20,
+                          ema_fast=50,
+                          ema_slow=200,
                           momentum_window=14)
 
         last_processed_timestamp = df.iloc[-1]['timestamp']
@@ -355,9 +355,9 @@ def generate_signals(df, start_idx=1,
                     account_equity=100000, 
                     risk_per_trade=0.02,
                     atr_multiplier=3.5,
-                    adx_threshold=25,
-                    ema_fast=21,
-                    ema_slow=55,
+                    adx_threshold=20,
+                    ema_fast=50,
+                    ema_slow=200,
                     momentum_window=14):
     """
     Elite Trend Following Strategy (1M/5M Timeframe)
@@ -397,7 +397,7 @@ def generate_signals(df, start_idx=1,
     df['ema_fast'] = EMAIndicator(close=df['close'], window=ema_fast).ema_indicator()
     df['ema_slow'] = EMAIndicator(close=df['close'], window=ema_slow).ema_indicator()
     df['ADX'] = ADXIndicator(high=df['high'], low=df['low'], 
-                           close=df['close'], window=14).adx()
+                           close=df['close'], window=50).adx()
     
     # Momentum Confirmation
     macd = MACD(close=df['close'], window_fast=12, 
@@ -605,13 +605,13 @@ def generate_signals(df, start_idx=1,
     if len(df) > 0:
         last = df.iloc[-1]
         print("\n=== STRATEGY METRICS ===")
-        print(f"Trend Strength (ADX): {last['ADX']:.1f} {'(Strong)' if last['ADX'] > 30 else '(Moderate)'}")
+        print(f"Trend Strength (ADX): {last['ADX']:.1f} {'(Strong)' if last['ADX'] > 20 else '(Moderate)'}")
         print(f"Volatility (ATR): {last['ATR']:.5f} | ATR Multiplier: {atr_multiplier}")
-        print(f"EMA({ema_fast}/{ema_slow}): {last['ema_fast']:.5f} / {last['ema_slow']:.5f}")
+        print(f"EMA({ema_fast}/{ema_slow}): {last['ema_fast']:.12f} / {last['ema_slow']:.12f}")
         
         if 'MACD_line' in df.columns and 'MACD_signal' in df.columns:
             macd_status = "Bullish" if last['MACD_line'] > last['MACD_signal'] else "Bearish"
-            print(f"MACD: {macd_status} ({last['MACD_line']:.3f} vs {last['MACD_signal']:.3f})")
+            print(f"MACD: {macd_status} ({last['MACD_line']:.12f} vs {last['MACD_signal']:.12f})")
         
         print(f"Volume Activity: {last['vroc']:.2f}x {'(High)' if last['vroc'] > 1.5 else '(Normal)'}")
         print(f"Last Decision: {decision}")
