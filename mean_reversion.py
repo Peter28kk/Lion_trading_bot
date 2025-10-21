@@ -470,7 +470,7 @@ def generate_signals(df, start_idx=1,
                 # Bearish convergence (Short entry)
                 elif (prev_ema_fast_val > prev_ema_slow_val and c < ema_fast_val < ema_slow_val and
                       macd_line < macd_signal and
-                      vroc > 1.3):
+                      vroc > 1.1):
                     
                     active_trade = True
                     trade_direction = 'short'
@@ -613,7 +613,7 @@ def generate_signals(df, start_idx=1,
             macd_status = "Bullish" if last['MACD_line'] > last['MACD_signal'] else "Bearish"
             print(f"MACD: {macd_status} ({last['MACD_line']:.12f} vs {last['MACD_signal']:.12f})")
         
-        print(f"Volume Activity: {last['vroc']:.2f}x {'(High)' if last['vroc'] > 1.5 else '(Normal)'}")
+        print(f"Volume Activity: {last['vroc']:.12f}x {'(High)' if last['vroc'] > 1.1 else '(Normal)'}")
         print(f"Last Decision: {decision}")
     
     return df, decision 
