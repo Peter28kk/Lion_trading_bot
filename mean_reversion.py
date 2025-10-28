@@ -22,7 +22,14 @@ from scipy.signal import welch, find_peaks
 from ta.momentum import RSIIndicator
 from ta.trend import ADXIndicator, EMAIndicator
 from ta.momentum import RSIIndicator
-from ta.volatility import AverageTrueRange 
+from ta.volatility import AverageTrueRange
+import warnings
+try:
+    from scipy.sparse import SparseEfficiencyWarning
+except Exception:
+    # Fallback: define a lightweight warning class if SciPy is not available
+    class SparseEfficiencyWarning(Warning):
+        pass
 
 latest_price = None
 prices = []
@@ -448,8 +455,7 @@ def generate_signals(df, start_idx=1,
                 
                 # Bullish convergence (Long entry)
                 if (prev_ema_fast_val < prev_ema_slow_val and c > ema_fast_val > ema_slow_val and
-                    macd_line > macd_signal and
-                    vroc > 1.5):
+                    macd_line > macd_signal):
                     
                     active_trade = True
                     trade_direction = 'long'
@@ -469,8 +475,7 @@ def generate_signals(df, start_idx=1,
                     
                 # Bearish convergence (Short entry)
                 elif (prev_ema_fast_val > prev_ema_slow_val and c < ema_fast_val < ema_slow_val and
-                      macd_line < macd_signal and
-                      vroc > 1.1):
+                      macd_line < macd_signal):
                     
                     active_trade = True
                     trade_direction = 'short'
