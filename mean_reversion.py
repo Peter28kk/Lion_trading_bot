@@ -404,7 +404,7 @@ def generate_signals(df, start_idx=1,
     df['ema_fast'] = EMAIndicator(close=df['close'], window=ema_fast).ema_indicator()
     df['ema_slow'] = EMAIndicator(close=df['close'], window=ema_slow).ema_indicator()
     df['ADX'] = ADXIndicator(high=df['high'], low=df['low'], 
-                           close=df['close'], window=50).adx()
+                           close=df['close'], window=14).adx()
     
     # Momentum Confirmation
     macd = MACD(close=df['close'], window_fast=12, 
@@ -454,8 +454,7 @@ def generate_signals(df, start_idx=1,
                 df.at[i, 'signal'] = 0
                 
                 # Bullish convergence (Long entry)
-                if (prev_ema_fast_val < prev_ema_slow_val and c > ema_fast_val > ema_slow_val and
-                    macd_line > macd_signal):
+                if (prev_ema_fast_val < prev_ema_slow_val and c > ema_fast_val > ema_slow_val):
                     
                     active_trade = True
                     trade_direction = 'long'
@@ -474,8 +473,7 @@ def generate_signals(df, start_idx=1,
                     df.at[i, 'decision'] = decision
                     
                 # Bearish convergence (Short entry)
-                elif (prev_ema_fast_val > prev_ema_slow_val and c < ema_fast_val < ema_slow_val and
-                      macd_line < macd_signal):
+                elif (prev_ema_fast_val > prev_ema_slow_val and c < ema_fast_val < ema_slow_val):
                     
                     active_trade = True
                     trade_direction = 'short'
@@ -515,7 +513,6 @@ def generate_signals(df, start_idx=1,
                     # Exit conditions (independent of ADX)
                     exit_conditions = [
                         l <= trailing_stop,  # Stop loss hit
-                        macd_line < macd_signal,  # Momentum reversal
                         c < ema_fast_val,  # Price below fast EMA
                         profit_ratio < -1.5  # Emergency stop
                     ]
@@ -564,7 +561,6 @@ def generate_signals(df, start_idx=1,
                     # Exit conditions
                     exit_conditions = [
                         h >= trailing_stop,  # Stop loss hit
-                        macd_line > macd_signal,  # Momentum reversal
                         c > ema_fast_val,  # Price above fast EMA
                         profit_ratio < -1.5  # Emergency stop
                     ]
