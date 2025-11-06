@@ -102,7 +102,7 @@ def process_new_candle(new_candle):
                           account_equity=100000, 
                           risk_per_trade=0.02,
                           atr_multiplier=3.5,
-                          adx_threshold=20,
+                          adx_threshold=10,
                           ema_fast=50,
                           ema_slow=200,
                           momentum_window=14)
@@ -362,7 +362,7 @@ def generate_signals(df, start_idx=1,
                     account_equity=100000, 
                     risk_per_trade=0.02,
                     atr_multiplier=3.5,
-                    adx_threshold=20,
+                    adx_threshold=10,
                     ema_fast=50,
                     ema_slow=200,
                     momentum_window=14):
