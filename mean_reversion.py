@@ -454,7 +454,11 @@ def generate_signals(df, start_idx=1,
                 df.at[i, 'signal'] = 0
                 
                 # Bullish convergence (Long entry)
-                if (prev_ema_fast_val < prev_ema_slow_val and c > ema_fast_val > ema_slow_val):
+                # FIXED VERSION - Use consistent timing:
+                if (ema_fast_val > ema_slow_val and 
+                    df['ema_fast'].iloc[i-1] <= df['ema_slow'].iloc[i-1] and
+                    adx_val >= adx_threshold):
+                    # True EMA crossover detection
                     
                     active_trade = True
                     trade_direction = 'long'
@@ -473,8 +477,11 @@ def generate_signals(df, start_idx=1,
                     df.at[i, 'decision'] = decision
                     
                 # Bearish convergence (Short entry)
-                elif (prev_ema_fast_val > prev_ema_slow_val and c < ema_fast_val < ema_slow_val):
-                    
+                # FIXED VERSION - Use consistent timing:
+                if (ema_fast_val < ema_slow_val and 
+                    df['ema_fast'].iloc[i-1] >= df['ema_slow'].iloc[i-1] and
+                    adx_val >= adx_threshold):
+                    # True EMA crossover detection
                     active_trade = True
                     trade_direction = 'short'
                     entry_price = c
